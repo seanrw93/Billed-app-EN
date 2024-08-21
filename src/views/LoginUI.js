@@ -17,11 +17,11 @@ export default () => {
             <div class="card">
               <div class="card-body">
                 <form class="form-signin" data-testid="form-employee">
-                  <h2 class="h3 mb-3 font-weight-normal">Employee</h1>
-                  <label for="inputEmail">Email</label>
-                  <input type="email" data-testid="employee-email-input" class="form-control" placeholder="johndoe@email.com" required autofocus>
-                  <label for="inputPassword">Password</label>
-                  <input type="password" data-testid="employee-password-input" class="form-control" placeholder="******" required>
+                  <h2 class="h3 mb-3 font-weight-normal">Employee</h2>
+                  <label for="employeeEmail">Email</label>
+                  <input type="email" id="employeeEmail" data-testid="employee-email-input" class="form-control" placeholder="johndoe@email.com" required autofocus>
+                  <label for="employeePassword">Password</label>
+                  <input type="password" id="employeePassword" data-testid="employee-password-input" class="form-control" placeholder="******" required>
                   <button class="btn btn-lg btn-primary btn-block" data-testid="employee-login-button" style="background-color: #0E5AE5;" type="submit">Log in</button>
                 </form>
               </div>
@@ -31,11 +31,11 @@ export default () => {
             <div class="card">
               <div class="card-body">
                 <form class="form-signin" data-testid="form-admin">
-                  <h2 class="h3 mb-3 font-weight-normal">Administration</h1>
-                  <label for="inputEmail">Email</label>
-                  <input type="email" data-testid="admin-email-input" class="form-control" placeholder="johndoe@email.com" required autofocus>
-                  <label for="inputPassword">Password</label>
-                  <input type="password" data-testid="admin-password-input" class="form-control" placeholder="******" required>
+                  <h2 class="h3 mb-3 font-weight-normal">Administration</h2>
+                  <label for="adminEmail">Email</label>
+                  <input type="email" id="adminEmail" data-testid="admin-email-input" class="form-control" placeholder="johndoe@email.com" required autofocus>
+                  <label for="adminPassword">Password</label>
+                  <input type="password" id="adminPassword" data-testid="admin-password-input" class="form-control" placeholder="******" required>
                   <button  type="submit" class="btn btn-lg btn-primary btn-block" data-testid="admin-login-button" style="background-color: #0E5AE5;">Log in</button>
                 </form>
               </div>
