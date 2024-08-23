@@ -19,6 +19,15 @@ export default class NewBill {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+
+    
+    if(!fileName.match(allowedExtensions)) {
+      e.target.value = '';
+      alert('Only jpg, jpeg and png files are allowed');
+      return;
+    }
+
     this.firestore
       .storage
       .ref(`justificatifs/${fileName}`)
@@ -29,7 +38,7 @@ export default class NewBill {
         this.fileName = fileName
       })
   }
-  handleSubmit = e => {
+  handleSubmit = async e => {
     e.preventDefault()
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
