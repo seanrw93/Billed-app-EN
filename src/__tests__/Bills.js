@@ -11,7 +11,9 @@ describe("Given I am connected as an employee", () => {
     
     // Render VerticalLayout
     const verticalLayoutHTML = VerticalLayout(120);
-    document.body.innerHTML = verticalLayoutHTML;
+    document.addEventListener('DOMContentLoaded', () => {
+      document.body.innerHTML = verticalLayoutHTML;
+    });
   });
 
 describe("When I am on Bills Page", () => {
@@ -19,11 +21,10 @@ describe("When I am on Bills Page", () => {
     beforeEach(() => document.body.innerHTML = html)
 
     test("Then bill icon in vertical layout should be highlighted", () => {
-      // document.body.innerHTML = html;
-      // screen.debug();
-      // const icon = screen.getByTestId("icon-window");
-      // expect(icon).toBeTruthy();
-      // expect(icon).toHaveClass("active-icon");
+      document.body.innerHTML = html;
+      const icon = screen.getByTestId("icon-window");
+      expect(icon).toBeTruthy();
+      expect(icon).toHaveClass("active-icon");
     })
     test("Then bills should be ordered from earliest to latest", () => {
       document.body.innerHTML = html
