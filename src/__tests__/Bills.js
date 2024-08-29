@@ -1,7 +1,9 @@
-import { screen } from "@testing-library/dom";
+import { screen, render } from "@testing-library/dom";
 import BillsUI from "../views/BillsUI.js";
 import { bills } from "../fixtures/bills.js";
 import VerticalLayout from "../views/VerticalLayout.js";
+import LoadingPage from "../views/LoadingPage.js";
+import ErrorPage from "../views/ErrorPage.js";
 
 // Mock user data in localStorage
 const mockUserEmployee = () => {
@@ -51,6 +53,39 @@ describe("Given I am connected as an employee", () => {
       const antiChrono = (a, b) => ((a < b) ? 1 : -1);
       const datesSorted = [...dates].sort(antiChrono);
       expect(dates).toEqual(datesSorted);
+    });
+
+    test("Then the loading page should be displayed", () => {
+      const html = BillsUI({ data: [], loading: true });
+      document.body.innerHTML = html;
+      expect(screen.getByText('Loading...')).toBeTruthy();
+    });
+
+    test("Then the error page should be displayed", () => {
+      const html = BillsUI({ data: [], error: 'Error message' });
+      document.body.innerHTML = html;
+      expect(screen.getByText('Error message')).toBeTruthy();
+    });
+
+    test("Then the bills should be rendered correctly", () => {
+      const html = BillsUI({ data: bills });
+      document.body.innerHTML = html;
+      const rows = screen.getAllByTestId('tbody-row');
+      expect(rows.length).toBe(bills.length);
+    });
+
+    test("Then the modal should be rendered correctly", () => {
+      const html = BillsUI({ data: bills });
+      document.body.innerHTML = html;
+      const modal = screen.getByTestId('modalDialog');
+      expect(modal).toBeTruthy();
+    });
+
+    test("Then the new bill button should be rendered", () => {
+      const html = BillsUI({ data: bills });
+      document.body.innerHTML = html;
+      const newBillButton = screen.getByTestId('btn-new-bill');
+      expect(newBillButton).toBeTruthy();
     });
   });
 });
