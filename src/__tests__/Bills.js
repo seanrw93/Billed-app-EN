@@ -5,16 +5,17 @@ import VerticalLayout from "../views/VerticalLayout.js";
 
 
 describe("Given I am connected as an employee", () => {
-  beforeEach(() => {
-    // Mock user in localStorage
-    localStorage.setItem('user', JSON.stringify({ type: 'Employee' }));
+  // beforeEach(() => {
+  //   // Mock user in localStorage
+  //   localStorage.setItem('user', JSON.stringify({ type: 'Employee' }));
     
-    // Render VerticalLayout
-    const verticalLayoutHTML = VerticalLayout(120);
-    document.addEventListener('DOMContentLoaded', () => {
-      document.body.innerHTML = verticalLayoutHTML;
-    });
-  });
+  //   // Render VerticalLayout
+  //   const verticalLayoutHTML = VerticalLayout(120);
+  //   document.addEventListener('DOMContentLoaded', () => {
+  //     document.body.innerHTML = verticalLayoutHTML;
+  //   });
+  //   console.log("VerticalLayout rendered");
+  // });
 
 describe("When I am on Bills Page", () => {
     const html = BillsUI({ data: bills })
@@ -23,6 +24,7 @@ describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", () => {
       document.body.innerHTML = html;
       const icon = screen.getByTestId("icon-window");
+      expect(icon).toBeInTheDocument();
       expect(icon).toBeTruthy();
       expect(icon).toHaveClass("active-icon");
     })
