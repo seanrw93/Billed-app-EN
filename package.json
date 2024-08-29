@@ -3,7 +3,7 @@
     "test": "jest --coverage --noStackTrace --silent"
   },
   "jest": {
-    "verbose": false,
+    "verbose": true,
     "setupFiles": [
       "./setup-jest.js"
     ],
@@ -14,6 +14,9 @@
       "!**/external/**",
       "!**/fixtures/**",
       "!**/lcov-report/**"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.js"
     ]
   },
   "type": "module",
@@ -28,7 +31,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/user-event": "^12.0.11",
     "babel-jest": "^26.1.0",
-    "jest": "^26.1.0",
+    "jest": "^26.6.3",
     "jest-html-reporter": "^3.1.3"
   }
 }
