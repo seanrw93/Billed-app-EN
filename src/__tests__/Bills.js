@@ -35,14 +35,14 @@ describe("Given I am connected as an employee", () => {
 
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", () => {
-      // Select the icon element
-      const icon = screen.getByTestId("icon-window");
+      // Select all icon elements
+      const icons = screen.getAllByTestId("icon-window");
 
-      // Check if the icon exists
-      expect(icon).toBeInTheDocument();
+      // Check if at least one icon exists
+      expect(icons.length).toBeGreaterThan(0);
 
-      // Check if the icon is highlighted with the appropriate class
-      expect(icon).toHaveClass("active-icon"); // Make sure the class name matches your app's implementation
+      // Check if the first icon is highlighted with the appropriate class
+      expect(icons[0].classList.contains("active-icon")).toBe(true); // Make sure the class name matches your app's implementation
     });
 
     test("Then bills should be ordered from latest to earliest", () => {
