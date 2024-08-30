@@ -3,7 +3,7 @@
     "test": "jest --coverage --noStackTrace --silent"
   },
   "jest": {
-    "verbose": true,
+    "verbose": false,
     "setupFiles": [
       "./setup-jest.js"
     ],
@@ -16,8 +16,16 @@
       "!**/lcov-report/**"
     ],
     "testMatch": [
-      "**/__tests__/**/*.js"
-    ]
+      "**/src/__tests__/**/*.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "testEnvironment": "jest-environment-jsdom"
   },
   "type": "module",
   "dependencies": {
@@ -31,7 +39,8 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/user-event": "^12.0.11",
     "babel-jest": "^26.1.0",
-    "jest": "^26.6.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "jest-html-reporter": "^3.1.3"
   }
 }
