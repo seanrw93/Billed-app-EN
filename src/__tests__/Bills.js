@@ -24,7 +24,7 @@ const highlightIcon = () => {
 };
 
 // Mock the firestore module to use the existing firebase.js mock
-jest.mock("../__mocks__/firebase.js");
+jest.mock("../app/firestore.js");
 
 // Mock the jQuery modal function
 $.fn.modal = jest.fn();
@@ -57,6 +57,81 @@ describe("Given I am connected as an employee", () => {
     });
   });
 
+  describe("Given I am connected as an employee", () => {
+    describe("When I navigate to Bills", () => {
+      test("Then fetches bills from mock API GET", async () => {
+        const getSpy = jest.spyOn(firebase, "bills")
+        const bills = await firebase.bills().get()
+        expect(getSpy).toHaveBeenCalledTimes(1)
+        expect(bills.docs.length).toBe(4)
+      })
+    })
+  
+    describe("When I call getBills method", () => {
+      test("Then it should return bills from firestore", async () => {
+        const firestore = {
+          bills: () => ({
+            get: jest.fn().mockResolvedValue({
+              docs: [
+                {
+                  id: "1",
+                  data: () => ({
+                    date: "2021-01-01",
+                    amount: 100,
+                    status: "pending",
+                    type: "Hôtel et logement",
+                    name: "Test Bill 1",
+                    fileUrl: "http://example.com",
+                    fileName: "test1.jpg",
+                    commentary: "Test commentary 1",
+                    commentAdmin: "Test admin comment 1",
+                    email: "test1@example.com",
+                    vat: "20",
+                    pct: 20
+                  })
+                },
+                {
+                  id: "2",
+                  data: () => ({
+                    date: "2021-02-01",
+                    amount: 200,
+                    status: "accepted",
+                    type: "Transports",
+                    name: "Test Bill 2",
+                    fileUrl: "http://example.com",
+                    fileName: "test2.jpg",
+                    commentary: "Test commentary 2",
+                    commentAdmin: "Test admin comment 2",
+                    email: "test2@example.com",
+                    vat: "10",
+                    pct: 10
+                  })
+                }
+              ]
+            })
+          })
+        }
+  
+        const billsInstance = new Bills({ document, onNavigate: jest.fn(), firestore, localStorage: localStorageMock })
+        const bills = await billsInstance.getBills()
+        expect(bills.length).toBe(2)
+        expect(bills[0].id).toBe("1")
+        expect(bills[1].id).toBe("2")
+      })
+
+      test("Then it should handle the error", async () => {
+        const firestore = {
+          bills: () => ({
+            get: jest.fn().mockRejectedValue(new Error("Firestore error"))
+          })
+        };
+
+        const billsInstance = new Bills({ document, onNavigate: jest.fn(), firestore, localStorage: localStorageMock });
+        await expect(billsInstance.getBills()).rejects.toThrow("Firestore error");
+      });
+    })
+  })
+
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", () => {
       // Select all icon elements
@@ -70,11 +145,11 @@ describe("Given I am connected as an employee", () => {
     });
 
     test("Then bills should be ordered from latest to earliest", () => {
-      const dates = screen.getAllByText(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i)
-        .map((date) => date.innerHTML);
-      const antiChrono = (a, b) => ((a < b) ? 1 : -1);
-      const datesSorted = [...dates].sort(antiChrono);
-      expect(dates).toEqual(datesSorted);
+      document.body.innerHTML = BillsUI({ data: bills })
+      const dates = screen.getAllByText(/^\d{2}-\d{2}-\d{4}$/i).map(a => a.innerHTML)
+      const antiChrono = (a, b) => ((a < b) ? 1 : -1)
+      const datesSorted = [...dates].sort(antiChrono)
+      expect(dates).toEqual(datesSorted)
     });
 
     test("Then the loading page should be displayed", () => {
