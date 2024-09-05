@@ -1,4 +1,5 @@
 import { screen, render, fireEvent } from "@testing-library/dom";
+import '@testing-library/jest-dom/extend-expect'; // Import jest-dom matchers
 import BillsUI from "../views/BillsUI.js";
 import Bills from "../containers/Bills.js";
 import { bills } from "../fixtures/bills.js";
@@ -108,12 +109,12 @@ describe("Given I am connected as an employee", () => {
 
     test("Then the loading page should be displayed", () => {
       renderBillsPage({ data: [], loading: true });
-      expect(screen.getByText('Loading...')).toBeTruthy();
+      expect(screen.queryByText('Loading...')).not.toBeNull();
     });
 
     test("Then the error page should be displayed", () => {
       renderBillsPage({ data: [], error: 'Error message' });
-      expect(screen.getByText('Error message')).toBeTruthy();
+      expect(screen.queryByText('Error message')).not.toBeNull();
     });
 
     test("Then the bills should be rendered correctly", () => {
@@ -132,6 +133,12 @@ describe("Given I am connected as an employee", () => {
       renderBillsPage({ data: bills });
       const newBillButton = screen.getByTestId('btn-new-bill');
       expect(newBillButton).toBeTruthy();
+    });
+
+    test("Then it should render empty table when no data is provided", () => {
+      renderBillsPage({ data: [] });
+      const rows = screen.queryAllByTestId('tbody-row');
+      expect(rows.length).toBe(0);
     });
   });
 
