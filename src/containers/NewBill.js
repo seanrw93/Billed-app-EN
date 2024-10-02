@@ -10,7 +10,7 @@ export default class NewBill {
     const formNewBill = this.document.querySelector(`form[data-testid="form-new-bill"]`)
     formNewBill.addEventListener("submit", this.handleSubmit)
     const file = this.document.querySelector(`input[data-testid="file"]`)
-    file.addEventListener("change", this.handleChangeFile)
+    file.addEventListener("change", this.handleChangeFile.bind(this))
     this.fileUrl = null
     this.fileName = null
     new Logout({ document, localStorage, onNavigate })
@@ -20,7 +20,6 @@ export default class NewBill {
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
     const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
-
     
     if(!fileName.match(allowedExtensions)) {
       e.target.value = '';
@@ -36,6 +35,12 @@ export default class NewBill {
       .then(url => {
         this.fileUrl = url
         this.fileName = fileName
+
+        //Optional: Log the fileUrl for debugging
+        console.log('File uploaded successfully:', url);
+      })
+      .catch(error => {
+        console.error('File upload error:', error);
       })
   }
   handleSubmit = async e => {

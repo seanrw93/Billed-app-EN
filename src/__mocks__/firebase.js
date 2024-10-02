@@ -1,6 +1,8 @@
+// __mocks__/firebase.js
 export default {
   bills: () => {
     return {
+      add: jest.fn(() => Promise.resolve()), 
       get: () => {
         return Promise.resolve({
           docs: [
