@@ -11,7 +11,7 @@ import $ from 'jquery';
 
 // Mock user data in localStorage
 const mockUserEmployee = () => {
-  localStorage.setItem('user', JSON.stringify({ type: 'Employee' }));
+  localStorage.setItem('user', JSON.stringify({ type: 'Employee', email: 'a@a' }));
 };
 
 // Mock the logic to highlight the active icon
@@ -25,7 +25,6 @@ const highlightIcon = () => {
 // Mock the firestore module to use the existing firebase.js mock
 jest.mock("../app/firestore.js");
 
-// Mock the jQuery modal function
 $.fn.modal = jest.fn();
 
 describe("Given I am connected as an employee", () => {
@@ -55,36 +54,44 @@ describe("Given I am connected as an employee", () => {
   });
 
   describe("When I call getBills method", () => {
-    const mockFirestore = (response) => ({
-      bills: () => ({
-        get: jest.fn().mockResolvedValue(response)
-      })
+    beforeEach(() => {
+      mockUserEmployee();
+      global.localStorage = localStorageMock;
     });
-
     test("Then it should return bills from firestore", async () => {
-      const firestore = mockFirestore({
-        docs: [
-          { id: "1", data: () => ({ date: "2021-01-01", amount: 100, status: "pending", type: "Hôtel et logement", name: "Test Bill 1", fileUrl: "http://example.com", fileName: "test1.jpg", commentary: "Test commentary 1", commentAdmin: "Test admin comment 1", email: "test1@example.com", vat: "20", pct: 20 }) },
-          { id: "2", data: () => ({ date: "2021-02-01", amount: 200, status: "accepted", type: "Transports", name: "Test Bill 2", fileUrl: "http://example.com", fileName: "test2.jpg", commentary: "Test commentary 2", commentAdmin: "Test admin comment 2", email: "test2@example.com", vat: "10", pct: 10 }) }
-        ]
-      });
+      const mockBills = await firebase.bills().get();
 
+      const firestore = {
+        bills: () => ({
+          get: jest.fn().mockResolvedValue(mockBills)
+        })
+      };
+  
+  
       const billsInstance = new Bills({ document, onNavigate: jest.fn(), firestore, localStorage: localStorageMock });
       const bills = await billsInstance.getBills();
-      expect(bills.length).toBe(2);
-      expect(bills[0].id).toBe("1");
-      expect(bills[1].id).toBe("2");
+      expect(bills.length).toBe(4);
+      expect(bills[0].id).toBe("47qAXb6fIm2zOKkLzMro");
+      expect(bills[1].id).toBe("BeKy5Mo4jkmdfPGYpTxZ");
+      expect(bills[2].id).toBe("UIUZtnPQvnbFnB0ozvJh");
+      expect(bills[3].id).toBe("qcCK3SzECmaZAGRrHjaC");
     });
-
-    test("Then it should handle the error", async () => {
+  
+    test("Then it should handle the error in catch block", async () => {
       const firestore = {
         bills: () => ({
           get: jest.fn().mockRejectedValue(new Error("Firestore error"))
         })
       };
-
+  
       const billsInstance = new Bills({ document, onNavigate: jest.fn(), firestore, localStorage: localStorageMock });
       await expect(billsInstance.getBills()).rejects.toThrow("Firestore error");
+    });
+  
+    test("Then it should return an empty array if firestore is null", async () => {
+      const billsInstance = new Bills({ document, onNavigate: jest.fn(), firestore: null, localStorage: localStorageMock });
+      const bills = await billsInstance.getBills();
+      expect(bills).toEqual([]);
     });
   });
 

@@ -24,20 +24,44 @@ export default class Bills {
   }
 
   getBills = () => {
-    return this.firestore
-      .bills()
-      .get()
-      .then(snapshot => {
-        const bills = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        return bills;
-      })
-      .catch(error => {
-        throw error;
-      });
-  }
+    const userEmail = localStorage.getItem('user') ?
+      JSON.parse(localStorage.getItem('user')).email : "";
+    if (this.firestore) {
+      return this.firestore
+        .bills()
+        .get()
+        .then(snapshot => {
+          const bills = snapshot.docs
+            .map(doc => {
+              try {
+                return {
+                  id: doc.id,
+                  ...doc.data(),
+                  date: formatDate(doc.data().date),
+                  status: formatStatus(doc.data().status)
+                };
+              } catch (e) {
+                console.error(e, 'for', doc.data());
+                return {
+                  id: doc.id,
+                  ...doc.data(),
+                  date: doc.data().date,
+                  status: formatStatus(doc.data().status)
+                };
+              }
+            })
+            .filter(bill => bill.email === userEmail);
+          return bills;
+        })
+        .catch(error => {
+          console.error('Error fetching bills:', error);
+          throw error;
+        });
+    } else {
+      console.log("Firestore is null");
+      return Promise.resolve([]);
+    }
+  };
 
   // Handle click event for "New Bill" button
   handleClickNewBill = () => {
