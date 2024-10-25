@@ -58,9 +58,13 @@ export default class NewBill {
       fileUrl: this.fileUrl,
       fileName: this.fileName,
       status: 'pending'
+    };
+    try {
+      await this.createBill(bill)
+      this.onNavigate(ROUTES_PATH['Bills'])
+    } catch (e) {
+      console.error("Form submission error",e)
     }
-    this.createBill(bill)
-    this.onNavigate(ROUTES_PATH['Bills'])
   }
 
   // no need to cover this function by tests

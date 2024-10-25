@@ -212,7 +212,7 @@ describe("Given I am connected as an employee", () => {
 
         // Create a file with a valid extension
         const validFile = new File(["file content"], "valid-file.jpg", {
-          type: "image/jpeg",
+          type: "text/plain",
         });
 
         // Simulate a change event with the valid file
@@ -254,6 +254,93 @@ describe("Given I am connected as an employee", () => {
 
         // Assert that onNavigate was called
         expect(onNavigate).toHaveBeenCalledWith(ROUTES_PATH['Bills']);
+      });
+    });
+
+    describe("When form submission is successful", () => {
+      test("Then it should handle successful form submission", async () => {
+        const form = screen.getByTestId("form-new-bill");
+    
+        // Set form values
+        fireEvent.change(screen.getByTestId("expense-type"), {
+          target: { value: "Travels" },
+        });
+        fireEvent.change(screen.getByTestId("expense-name"), {
+          target: { value: "Test Expense" },
+        });
+        fireEvent.change(screen.getByTestId("amount"), {
+          target: { value: "100" },
+        });
+        fireEvent.change(screen.getByTestId("datepicker"), {
+          target: { value: "2023-10-10" },
+        });
+        fireEvent.change(screen.getByTestId("vat"), {
+          target: { value: "20" },
+        });
+        fireEvent.change(screen.getByTestId("pct"), {
+          target: { value: "20" },
+        });
+        fireEvent.change(screen.getByTestId("commentary"), {
+          target: { value: "Test commentary" },
+        });
+    
+        // Mock the createBill method to reject
+        jest.spyOn(newBill, 'createBill').mockImplementation(() => Promise.resolve());
+        
+        // Submit the form
+        fireEvent.submit(form);
+    
+        // Wait for form submission
+        await new Promise(process.nextTick);
+    
+        // Assert that createBill was called
+        expect(newBill.createBill).toHaveBeenCalled();
+      });
+    });
+
+    describe("When form submission fails", () => {
+      test("Then it should handle errors during form submission", async () => {
+        const form = screen.getByTestId("form-new-bill");
+    
+        // Set form values
+        fireEvent.change(screen.getByTestId("expense-type"), {
+          target: { value: "Travels" },
+        });
+        fireEvent.change(screen.getByTestId("expense-name"), {
+          target: { value: "Test Expense" },
+        });
+        fireEvent.change(screen.getByTestId("amount"), {
+          target: { value: "100" },
+        });
+        fireEvent.change(screen.getByTestId("datepicker"), {
+          target: { value: "2023-10-10" },
+        });
+        fireEvent.change(screen.getByTestId("vat"), {
+          target: { value: "20" },
+        });
+        fireEvent.change(screen.getByTestId("pct"), {
+          target: { value: "20" },
+        });
+        fireEvent.change(screen.getByTestId("commentary"), {
+          target: { value: "Test commentary" },
+        });
+    
+        // Mock the createBill method to reject
+        jest.spyOn(newBill, 'createBill').mockImplementation(() => {
+          throw new Error("Form submission error");
+        });
+    
+        // Submit the form
+        fireEvent.submit(form);
+    
+        // Wait for form submission
+        await new Promise(process.nextTick);
+    
+        // Assert that createBill was called
+        expect(newBill.createBill).toHaveBeenCalled();
+    
+        // Optionally, you can check for an error message or other UI changes
+        // expect(screen.getByText("Form submission error")).toBeInTheDocument();
       });
     });
 
