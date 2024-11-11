@@ -27,6 +27,7 @@ export default class Bills {
     const userEmail = localStorage.getItem('user') ?
       JSON.parse(localStorage.getItem('user')).email : "";
     if (this.firestore) {
+      console.log('this.firestore.bills() method:', this.firestore.bills());
       return this.firestore
         .bills()
         .get()
@@ -54,7 +55,7 @@ export default class Bills {
           return bills;
         })
         .catch(error => {
-          console.error('Error fetching bills:', error);
+          console.log('Error fetching bills:', error);
           throw error;
         });
     } else {
