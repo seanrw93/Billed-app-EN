@@ -8,6 +8,9 @@ import { localStorageMock } from "../__mocks__/localStorage.js"
 import firebase from "../__mocks__/firebase"
 import { bills } from "../fixtures/bills"
 
+// Mock localStorage 
+Object.defineProperty(window, 'localStorage', { value: localStorageMock }); 
+window.localStorage.setItem('user', JSON.stringify({ type: 'Admin', email: 'admin@admin.com' }));
 
 describe('Given I am connected as an Admin', () => {
   describe('When I am on Dashboard page, there are bills, and there is one pending', () => {
@@ -207,13 +210,41 @@ describe('Given I am connected as Admin and I am on Dashboard page and I clicked
 describe("Given I am a user connected as Admin", () => {
   describe("When I navigate to Dashboard", () => {
     test("fetches bills from mock API GET", async () => {
-       const getSpy = jest.spyOn(firebase, "get")
-       const bills = await firebase.get()
-       expect(getSpy).toHaveBeenCalledTimes(1)
-       expect(bills.data.length).toBe(4)
-    })
+
+      // Instantiate the Dashboard container
+      const dashboard = new Dashboard({
+        document,
+        onNavigate: (pathname) => { document.body.innerHTML = ROUTES({ pathname }) },
+        firestore: firebase,
+        localStorage: window.localStorage,
+      });
+
+     const getSpy = jest.spyOn(dashboard, "getBillsAllUsers");
+    
+      // Mock the 'get' method to return the mock data
+      firebase.bills().get = jest.fn().mockResolvedValue({
+        docs: [
+          { id: 1, type: "Travels", amount: 100 },
+          { id: 2, type: "Food", amount: 50 },
+          { id: 3, type: "Bills", amount: 200 },
+          { id: 4, type: "Entertainment", amount: 150 },
+        ].map(bill => ({
+          id: bill.id,
+          data: () => ({ ...bill }), // Simulating the structure of Firestore docs
+        })),
+      });
+    
+      // Call the method that fetches bills
+      await dashboard.getBillsAllUsers();
+    
+      // Assertions
+      expect(getSpy).toHaveBeenCalledTimes(1);
+      const bills = await firebase.bills().get();
+      expect(bills.docs.length).toBe(4);
+    });
+    
     test("fetches bills from an API and fails with 404 message error", async () => {
-      firebase.get.mockImplementationOnce(() =>
+      firebase.bills().get.mockImplementationOnce(() =>
         Promise.reject(new Error("Erreur 404"))
       )
       const html = DashboardUI({ error: "Erreur 404" })
@@ -222,7 +253,7 @@ describe("Given I am a user connected as Admin", () => {
       expect(message).toBeTruthy()
     })
     test("fetches messages from an API and fails with 500 message error", async () => {
-      firebase.get.mockImplementationOnce(() =>
+      firebase.bills().get.mockImplementationOnce(() =>
         Promise.reject(new Error("Erreur 500"))
       )
       const html = DashboardUI({ error: "Erreur 500" })
