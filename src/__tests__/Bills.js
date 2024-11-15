@@ -111,11 +111,11 @@ describe("Given I am connected as an employee", () => {
       expect(icons[0].classList.contains("active-icon")).toBe(true);
     });
 
-    // Test to check if bills are ordered from latest to earliest
-    test("Then bills should be ordered from latest to earliest", () => {
+    // Test to check if bills are ordered from earliest to latest
+    test("Then bills should be ordered from earliest to latest", () => {
       renderBillsPage({ data: bills });
       const dates = screen.getAllByText(/^\d{2}-\d{2}-\d{4}$/i).map(a => a.innerHTML);
-      const antiChrono = (a, b) => ((a < b) ? 1 : -1);
+      const antiChrono = (a, b) => ((a > b) ? 1 : -1);
       const datesSorted = [...dates].sort(antiChrono);
       expect(dates).toEqual(datesSorted);
     });
