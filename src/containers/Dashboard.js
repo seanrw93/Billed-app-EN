@@ -131,27 +131,29 @@ export default class {
   }
 
   handleShowTickets(e, bills, index) {
-    if (this.counter === undefined || this.index !== index) this.counter = 0
-    if (this.index === undefined || this.index !== index) this.index = index
-    if (this.counter % 2 === 0) {
-      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
-      $(`#status-bills-container${this.index}`)
-        .html(cards(filteredBills(bills, getStatus(this.index))))
-      this.counter ++
+    if (!this.listStates) this.listStates = {}
+    if (!this.listStates[index]) this.listStates[index] = { counter: 0, isOpen: false }
+  
+    const listState = this.listStates[index]
+    
+    if (listState.isOpen) {
+      $(`#arrow-icon${index}`).css({ transform: 'rotate(90deg)' })
+      $(`#status-bills-container${index}`).html("")
     } else {
-      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
-      $(`#status-bills-container${this.index}`)
-        .html("")
-      this.counter ++
+      $(`#arrow-icon${index}`).css({ transform: 'rotate(0deg)' })
+      $(`#status-bills-container${index}`).html(cards(filteredBills(bills, getStatus(index))))
     }
-
+  
+    listState.isOpen = !listState.isOpen
+    listState.counter++
+  
     bills.forEach(bill => {
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
     })
-
+  
     return bills
-
   }
+  
 
   // no need to cover this function by tests
   getBillsAllUsers = () => {
