@@ -11,9 +11,9 @@ export default class Login {
     this.PREVIOUS_LOCATION = PREVIOUS_LOCATION
     this.firestore = firestore
     const formEmployee = this.document.querySelector(`form[data-testid="form-employee"]`)
-    formEmployee.addEventListener("submit", this.handleSubmitEmployee)
+    formEmployee.addEventListener("submit", this.handleSubmitEmployee.bind(this))  // Bind this
     const formAdmin = this.document.querySelector(`form[data-testid="form-admin"]`)
-    formAdmin.addEventListener("submit", this.handleSubmitAdmin)
+    formAdmin.addEventListener("submit", this.handleSubmitAdmin.bind(this))  // Bind this
   }
   handleSubmitEmployee = e => {
     const user = {
